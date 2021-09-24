@@ -1,11 +1,11 @@
 import { Input } from "@chakra-ui/input";
 import React from "react";
 
-const CoolInput = ({ ...props }) => {
+const CoolInput = ({ setValue, ...props }) => {
   return (
     <Input
       maxLength="20"
-      m="2"
+      m="4"
       backgroundColor="rgba(255,255,255,.3)"
       border="2px solid"
       borderColor="rgba(255,255,255,.7)"
@@ -13,6 +13,7 @@ const CoolInput = ({ ...props }) => {
       fontSize="28px"
       color="rgba(255,255,255,.8)"
       {...props}
+      onChange={(e) => setValue(e.target.value)}
     />
   );
 };
