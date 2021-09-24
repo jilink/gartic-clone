@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import socketIOClient from "socket.io-client";
-import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import { Box } from "@chakra-ui/layout";
+import Lobby from "./pages/Lobby";
 
 const ENDPOINT = "http://127.0.0.1:4001";
 
@@ -20,11 +21,11 @@ function App() {
     <Router>
       <Layout>
         <Switch>
-          <Route path="/">
+          <Route exact path="/">
             <Home />
           </Route>
           <Route path="/lobby">
-            <Home />
+            <Lobby />
           </Route>
         </Switch>
       </Layout>
@@ -53,6 +54,7 @@ const Layout = ({ children }) => {
           position="absolute"
           transform="translate(-50%, -50%)"
           border="4px rgba(29,29,27,.15) solid"
+          borderRadius="12px"
           boxShadow="inset 0px 2px 0px 0px rgb(255 255 255 / 15%), 0px 3px 0px 0px rgb(255 255 255 / 15%)"
           w="90%"
           h="90%"

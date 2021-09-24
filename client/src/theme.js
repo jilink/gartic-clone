@@ -7,6 +7,9 @@ const config = {
   useSystemColorMode: false,
   fonts: {
     body: "revert"
+  },
+  colors: {
+    secondary: "rgb(92, 255, 182)"
   }
 }
 // 3. extend the theme
