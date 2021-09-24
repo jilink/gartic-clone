@@ -44,7 +44,16 @@ const Layout = ({ children }) => {
         bgPosition="center"
         bgImage="url(https://garticphone.com/images/textura.png)"
       >
-        {children}{" "}
+        <Box
+          top="50%"
+          left="50%"
+          position="absolute"
+          transform="translate(-50%, -50%)"
+          border="4px rgba(29,29,27,.15) solid"
+          boxShadow="inset 0px 2px 0px 0px rgb(255 255 255 / 15%), 0px 3px 0px 0px rgb(255 255 255 / 15%)"
+        >
+          {children}{" "}
+        </Box>
       </Box>
     </Box>
   );
