@@ -23,6 +23,9 @@ function App() {
           <Route path="/">
             <Home />
           </Route>
+          <Route path="/lobby">
+            <Home />
+          </Route>
         </Switch>
       </Layout>
     </Router>
@@ -51,6 +54,8 @@ const Layout = ({ children }) => {
           transform="translate(-50%, -50%)"
           border="4px rgba(29,29,27,.15) solid"
           boxShadow="inset 0px 2px 0px 0px rgb(255 255 255 / 15%), 0px 3px 0px 0px rgb(255 255 255 / 15%)"
+          w="90%"
+          h="90%"
         >
           {children}{" "}
         </Box>

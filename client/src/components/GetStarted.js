@@ -4,7 +4,9 @@ import { Input } from "@chakra-ui/input";
 import { Box, Flex, Text } from "@chakra-ui/layout";
 import React, { useState } from "react";
 import Avatar from "./Avatar";
+import CoolButton from "./CoolButton";
 import CoolInput from "./CoolInput";
+import PlayIcon from "./svg/PlayIcon";
 
 const GetStarted = () => {
   const [name, setName] = useState("")
@@ -15,24 +17,10 @@ const GetStarted = () => {
           </Text>
       <Avatar name={name}/>
           <CoolInput isInvalid={!name} setValue={setName} placeholder="pseudoTropCool" />
-      <Button
-        w="fit-content"
-        leftIcon={<PlayIcon />}
-        bg="white"
-        color="#301A6B"
-        fontFamily="revert"
-        textTransform="uppercase"
-        fontWeight="bold"
-        boxShadow="0px 6px 0px 0px #301a6b"
-      >
-        Démarrer
-      </Button>
+          <CoolButton/>
     </Flex>
   );
 };
 
-const PlayIcon = () => {
-  return <Image h="3vh" src="https://garticphone.com/images/ic_play.svg" />;
-};
 
 export default GetStarted;

@@ -1,5 +1,4 @@
 import { Avatar as ChakraAvatar } from '@chakra-ui/avatar'
-import { Image } from '@chakra-ui/image'
 import React from 'react'
 
 const Avatar = ({name}) => {
