@@ -1,12 +1,14 @@
 import { Flex, Text } from "@chakra-ui/layout";
 import { useToast } from "@chakra-ui/toast";
 import React  from "react";
+import { useHistory } from "react-router";
 import CoolButton from "../components/CoolButton";
 import Players from "../components/Players";
 import InviteIcon from "../components/svg/InviteIcon";
 
 const Lobby = ({ setInviteURL, inviteURL }) => {
   const toast = useToast();
+  const history = useHistory();
 
   const onInvite = () => {
     navigator.clipboard.writeText(inviteURL);
@@ -19,6 +21,10 @@ const Lobby = ({ setInviteURL, inviteURL }) => {
     });
   };
 
+  const onStart = () => {
+      history.push("/start");
+  }
+
 
   return (
     <Flex direction="column" h="100%" alignItems="center" p="5">
@@ -30,7 +36,7 @@ const Lobby = ({ setInviteURL, inviteURL }) => {
         <CoolButton onClick={onInvite} leftIcon={<InviteIcon />}>
           Inviter
         </CoolButton>
-        <CoolButton />
+        <CoolButton onClick={onStart}/>
       </Flex>
     </Flex>
   );
