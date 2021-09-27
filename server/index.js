@@ -4,6 +4,7 @@ const socketIo = require("socket.io");
 
 const port = 4001;
 const index = require("./routes/index");
+const { makeid } = require("./utils");
 
 const app = express();
 app.use(index);
@@ -19,21 +20,61 @@ const io = socketIo(server, {
 
 let interval;
 
-io.on("connection", (socket) => {
+const state = {};
+const clientRooms = {};
+
+io.on("connection", (client) => {
   console.log("New client connected");
   if (interval) {
     clearInterval(interval);
   }
-  interval = setInterval(() => getApiAndEmit(socket), 1000);
-  socket.on("disconnect", () => {
-    console.log("Client disconnected");
-    clearInterval(interval);
-  });
+  client.on("disconnect", handleQuitGame);
+
+  client.on("createGame", handleNewGame);
+  client.on("joinGame", handleJoinGame);
+
+  function handleNewGame(playerName) {
+    let roomName = makeid(5)
+    clientRooms[client.id] = roomName;
+    client.emit('gameCode', roomName)
+    state[roomName] = {players : [{name: playerName, id: client.id}]};
+    client.join(roomName);
+    emitGameState(roomName, state[roomName])
+  };
+
+  function handleJoinGame(data) {
+    const roomName = data.id;
+    const playerName = data.name;
+    clientRooms[client.id] = roomName;
+    client.join(roomName);
+    if (!state[roomName]) return;
+    state[roomName].players.push({name: playerName, id: client.id});
+    emitGameState(roomName, state[roomName])
+  }
+  function handleQuitGame() {
+    console.log("a client as left")
+    const roomName = clientRooms[client.id];
+    if (!roomName) return;
+    if (!state[roomName]) return;
+    state[roomName].players = state[roomName].players.filter(
+      (item) => item.id !== client.id
+    );
+
+    client.leave(roomName);
+    emitGameState(roomName, state[roomName])
+  }
 });
 
-const getApiAndEmit = (socket) => {
+const getApiAndEmit = (client) => {
   const response = new Date();
-  socket.emit("FromAPI", response);
+  client.emit("FromAPI", response);
 };
+
+function emitGameState(room, gameState) {
+  // Send this event to everyone in the room.
+  io.sockets.in(room)
+    .emit('gameState', JSON.stringify(gameState));
+}
+
 
 server.listen(port, () => console.log(`Listening on port ${port}`));
