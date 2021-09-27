@@ -1,12 +1,18 @@
 import { Flex, Text } from "@chakra-ui/layout";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Link } from "react-router-dom";
+import SocketContext from "../socket-context";
 import Avatar from "./Avatar";
 import CoolButton from "./CoolButton";
 import CoolInput from "./CoolInput";
 
 const GetStarted = () => {
   const [name, setName] = useState("")
+  const socket = useContext(SocketContext)
+  const createGame = () => {
+    socket.emit("createGame");
+    socket.emit("joinGame", 'trcucuc');
+  }
   return (
     <Flex p="5" align="center" direction="column" bg="rgba(80,24,81,.25)">
       <Text fontWeight="bold" fontSize="2xl">
@@ -19,7 +25,7 @@ const GetStarted = () => {
         placeholder="pseudoTropCool"
       />
       <Link to="/lobby">
-        <CoolButton />
+        <CoolButton onClick={createGame} />
       </Link>
     </Flex>
   );

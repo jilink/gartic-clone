@@ -4,20 +4,29 @@ import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import { Box } from "@chakra-ui/layout";
 import Lobby from "./pages/Lobby";
+import SocketContext from "./socket-context";
 
-const ENDPOINT = "http://127.0.0.1:4001";
 
 function App() {
   const [response, setResponse] = useState("");
+  const [inviteURL, setInviteURL] = useState('')
+  const [socket, setSocket] = useState(null)
+
 
   useEffect(() => {
-    const socket = socketIOClient(ENDPOINT);
+    const socket = socketIOClient(process.env.REACT_APP_SOCKET_ENDPOINT)
+    setSocket(socket)
     socket.on("FromAPI", (data) => {
       setResponse(data);
+    });
+    socket.on("gameCode", (data) => {
+      console.log("data", data)
+      setInviteURL(data);
     });
   }, []);
 
   return (
+    <SocketContext.Provider value={socket}>
     <Router>
       <Layout>
         <Switch>
@@ -25,11 +34,12 @@ function App() {
             <Home />
           </Route>
           <Route path="/lobby">
-            <Lobby />
+            <Lobby inviteURL={inviteURL} />
           </Route>
         </Switch>
       </Layout>
     </Router>
+    </SocketContext.Provider>
   );
 }
 
