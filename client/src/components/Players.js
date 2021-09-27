@@ -1,12 +1,18 @@
 import { Flex, Text } from '@chakra-ui/layout'
-import React from 'react'
+import React, { useContext, useState, useEffect } from 'react'
+import GameContext from '../game-context'
 import Avatar from './Avatar'
 
 const Players = () => {
-  const players = [{name: 'mark', avatar: 'https://avatars.dicebear.com/api/bottts/mark.svg'}, {name: 'john', avatar: 'https://avatars.dicebear.com/api/bottts/john.svg'}, {name: 'hey', avatar: 'https://avatars.dicebear.com/api/bottts/hey.svg'}, {name: 'truc', avatar: 'https://avatars.dicebear.com/api/bottts/truc.svg'}, {name: 'huzaieu', avatar: 'https://avatars.dicebear.com/api/bottts/huzaieu.svg'}, ]
+  const gameContext = useContext(GameContext)
+  const [players, setPlayers] = useState([])
+  useEffect(() => {
+    console.log('context', gameContext)
+    setPlayers(gameContext?.players || [])
+  }, [gameContext])
   return (
       <Flex p="5" m="2" align="center" direction="column" bg="rgba(80,24,81,.25)" w="50%" h="80%" overflowY="scroll">
-        {players.map((player, index) => <Player key={index} player={player}/>)}
+        {players.length && players.map((player) => <Player key={player?.id} player={player}/>)}
       </Flex>
   )
 }

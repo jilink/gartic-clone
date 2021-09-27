@@ -5,40 +5,50 @@ import Home from "./pages/Home";
 import { Box } from "@chakra-ui/layout";
 import Lobby from "./pages/Lobby";
 import SocketContext from "./socket-context";
+import GameContext from "./game-context";
+import { makeURL } from "./helpers";
 
 
 function App() {
   const [response, setResponse] = useState("");
-  const [inviteURL, setInviteURL] = useState('')
-  const [socket, setSocket] = useState(null)
-
+  const [inviteURL, setInviteURL] = useState("");
+  const [socket, setSocket] = useState(null);
+  const [gameState, setGameState] = useState({});
 
   useEffect(() => {
-    const socket = socketIOClient(process.env.REACT_APP_SOCKET_ENDPOINT)
-    setSocket(socket)
+    const socket = socketIOClient(process.env.REACT_APP_SOCKET_ENDPOINT);
+    setSocket(socket);
     socket.on("FromAPI", (data) => {
       setResponse(data);
     });
     socket.on("gameCode", (data) => {
-      console.log("data", data)
-      setInviteURL(data);
+      setInviteURL(makeURL(data))
+    });
+    socket.on("gameState", (data) => {
+      console.log("data", data);
+      setGameState(JSON.parse(data));
     });
   }, []);
 
   return (
     <SocketContext.Provider value={socket}>
-    <Router>
-      <Layout>
-        <Switch>
-          <Route exact path="/">
-            <Home />
-          </Route>
-          <Route path="/lobby">
-            <Lobby inviteURL={inviteURL} />
-          </Route>
-        </Switch>
-      </Layout>
-    </Router>
+      <GameContext.Provider value={gameState}>
+        <Router>
+          <Layout>
+            <Switch>
+              <Route exact path="/">
+                <Home />
+              </Route>
+              <Route exact path="/lobby">
+                <Lobby inviteURL={inviteURL} />
+              </Route>
+              <Route path="/:id">
+                <Home setInviteURL={setInviteURL} inviteURL={inviteURL} />
+              </Route>
+            </Switch>
+          </Layout>
+        </Router>
+      </GameContext.Provider>
     </SocketContext.Provider>
   );
 }
