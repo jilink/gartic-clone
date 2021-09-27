@@ -1,7 +1,6 @@
 import { Flex, Text } from "@chakra-ui/layout";
 import { useHistory } from "react-router-dom";
 import React, { useContext, useState } from "react";
-import { Link } from "react-router-dom";
 import SocketContext from "../socket-context";
 import Avatar from "./Avatar";
 import CoolButton from "./CoolButton";

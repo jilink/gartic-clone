@@ -1,5 +1,5 @@
 import { Flex, Spacer, Text } from '@chakra-ui/layout'
-import React, { useContext, useEffect } from 'react'
+import React, { useEffect } from 'react'
 import { useParams } from 'react-router';
 import GetStarted from '../components/GetStarted'
 import { makeURL } from '../helpers';
@@ -11,7 +11,7 @@ const Home = ({ setInviteURL }) => {
     if (id) {
       setInviteURL(makeURL(id));
     }
-  }, []);
+  }, [id, setInviteURL]);
   return (
     <Flex h="100%" direction="column" alignItems="center" p="5">
       <Text p="2" fontSize="5xl">

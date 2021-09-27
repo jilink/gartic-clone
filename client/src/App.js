@@ -7,10 +7,10 @@ import Lobby from "./pages/Lobby";
 import SocketContext from "./socket-context";
 import GameContext from "./game-context";
 import { makeURL } from "./helpers";
+import Start from "./pages/Start";
 
 
 function App() {
-  const [response, setResponse] = useState("");
   const [inviteURL, setInviteURL] = useState("");
   const [socket, setSocket] = useState(null);
   const [gameState, setGameState] = useState({});
@@ -18,9 +18,6 @@ function App() {
   useEffect(() => {
     const socket = socketIOClient(process.env.REACT_APP_SOCKET_ENDPOINT);
     setSocket(socket);
-    socket.on("FromAPI", (data) => {
-      setResponse(data);
-    });
     socket.on("gameCode", (data) => {
       setInviteURL(makeURL(data))
     });
@@ -41,6 +38,9 @@ function App() {
               </Route>
               <Route exact path="/lobby">
                 <Lobby inviteURL={inviteURL} />
+              </Route>
+              <Route exact path="/start">
+                <Start />
               </Route>
               <Route path="/:id">
                 <Home setInviteURL={setInviteURL} inviteURL={inviteURL} />
