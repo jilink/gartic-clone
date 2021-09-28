@@ -1,6 +1,7 @@
 const express = require("express");
 const http = require("http");
 const socketIo = require("socket.io");
+const { default: Game } = require("./game");
 
 const port = 4001;
 const index = require("./routes/index");
@@ -24,6 +25,8 @@ const state = {};
 const clientRooms = {};
 
 io.on("connection", (client) => {
+  const testPlayers = [{name: 'mark', id: 'sdfosdf'}, {name: 'jksh', id: 's12fosdf'}, {name: 'dfsdfark', id: 'sddf'}, {name: 'john', id: 'sdfosdf654654'}, {name: 'markus', id: 'sdfosdf4654'}, ]
+  new Game("id", testPlayers)
   console.log("New client connected");
   if (interval) {
     clearInterval(interval);
@@ -69,6 +72,7 @@ io.on("connection", (client) => {
   function handleStartGame() {
     const roomName = clientRooms[client.id];
     io.sockets.in(roomName).emit('gameStart');
+    new Game('id', state[roomName].players)
     // state[roomName] = {players : [{name: playerName, id: client.id}]};
     // emitGameState(roomName, state[roomName])
   };
