@@ -16,7 +16,6 @@ const Start = () => {
   useEffect(() => {
     if (socket) {
     socket.on("turnStart", (data) => {
-      console.log("data", data);
       const tmpTurn = JSON.parse(data)
       setTurn(tmpTurn);
       setDisabled(false)
@@ -106,6 +105,7 @@ const Draw = ({ turn, disabled, setDisabled}) => {
         turn={turn}
         disabled={disabled}
         setDisabled={setDisabled}
+        setValue={setSavedDrawing}
         data={savedDrawing}
       />
     </>
@@ -122,7 +122,7 @@ const LoadedCanvas = ({ savedDrawing }) => {
           hideGrid
           brushRadius={7}
           lazyRadius={2}
-          canvasWidth={600}
+          canvasWidth={600}uu
           canvasHeight={450}
           saveData={savedDrawing}
         />
@@ -143,12 +143,20 @@ const LoadedCanvas = ({ savedDrawing }) => {
 
 const Write = ({ turn, disabled, setDisabled}) => {
   const [value, setValue] = useState("");
+  const [previousDrawing, setPreviousDrawing] = useState(null);
+  useEffect(() => {
+    if (turn.previousPlayerData && turn.data.type === 'write') {
+      setPreviousDrawing(turn.previousPlayerData.data)
+    } else {
+    setPreviousDrawing(null)
+    }
+  }, [turn])
   return (
     <>
-      {turn?.previousPlayerData ? <LoadedCanvas savedDrawing={turn.previousPlayerData.data} /> : null}
       <Text fontSize="2xl">
         {turn?.previousPlayerData ? "Ecris ce que tu vois !" : "Ecris quelque chose !"}
       </Text>
+      {previousDrawing ? <LoadedCanvas savedDrawing={previousDrawing} /> : null}
       <Flex w="100%">
         <CoolInput
           flex={{ base: null, md: "9" }}
@@ -190,8 +198,6 @@ const ReadyButton = ({
   const onReady = () => {
     if (turn?.data?.type === "draw") {
       data = data.getSaveData();
-    } else {
-      setValue("");
     }
     socket.emit("setTurnData", {
       data: data,
@@ -199,6 +205,7 @@ const ReadyButton = ({
       threadId: turn.threadId,
     });
     setDisabled(true);
+    setValue(null);
   };
 
   return (

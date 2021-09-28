@@ -80,7 +80,6 @@ io.on("connection", (client) => {
   };
 
   function handleSetTurnData(data) {
-    console.log("data", data)
     const roomName = clientRooms[client.id];
     state[roomName].game.setTurnData(data.currentTurn, data.threadId, data.data)
     if (state[roomName].game.isAllTurnDataFilled(data.currentTurn)) {
