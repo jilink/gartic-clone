@@ -10,7 +10,6 @@ import SocketContext from '../socket-context';
 
 const Start = () => {
   const [isDrawing, setIsDrawing] = useState(false)
-  const [savedDrawing, setSavedDrawing] = useState(null);
   const socket = useContext(SocketContext);
   const [turn, setTurn] = useState({})
   const [disabled, setDisabled] = useState(false)
@@ -18,8 +17,10 @@ const Start = () => {
     if (socket) {
     socket.on("turnStart", (data) => {
       console.log("data", data);
-      setTurn(JSON.parse(data));
+      const tmpTurn = JSON.parse(data)
+      setTurn(tmpTurn);
       setDisabled(false)
+      setIsDrawing(tmpTurn.data.type === 'draw')
     });
   }
   }, [socket])
@@ -47,17 +48,12 @@ const Start = () => {
       >
         {isDrawing ? (
           <Draw
-            savedDrawing={savedDrawing}
-            setSavedDrawing={setSavedDrawing}
-            setIsDrawing={setIsDrawing}
             turn={turn}
             disabled={disabled}
             setDisabled={setDisabled}
           />
         ) : (
           <Write
-            savedDrawing={savedDrawing}
-            setIsDrawing={setIsDrawing}
             turn={turn}
             disabled={disabled}
             setDisabled={setDisabled}
@@ -68,11 +64,17 @@ const Start = () => {
   );
 }
 
-const Draw = ({ savedDrawing, setSavedDrawing, setIsDrawing, turn, disabled, setDisabled}) => {
+const Draw = ({ turn, disabled, setDisabled}) => {
   const [largeCanvas] = useMediaQuery("(min-width: 48em)");
-
+  const [savedDrawing, setSavedDrawing] = useState(null);
   return (
     <>
+      <Text fontSize="2xl">
+        A toi de dessiner !
+      </Text>
+      <Text fontSize="2xl">
+        {turn?.previousPlayerData?.data}
+      </Text>
       {largeCanvas ? (
         <CanvasDraw
           disabled={disabled}
@@ -101,11 +103,10 @@ const Draw = ({ savedDrawing, setSavedDrawing, setIsDrawing, turn, disabled, set
         />
       )}
       <ReadyButton
-        data={savedDrawing.getSaveData()}
-        toggleIsDrawing={() => setIsDrawing(false)}
         turn={turn}
         disabled={disabled}
         setDisabled={setDisabled}
+        data={savedDrawing}
       />
     </>
   );
@@ -140,16 +141,13 @@ const LoadedCanvas = ({ savedDrawing }) => {
   );
 };
 
-const Write = ({ savedDrawing, setIsDrawing, turn, disabled, setDisabled}) => {
+const Write = ({ turn, disabled, setDisabled}) => {
   const [value, setValue] = useState("");
-  useEffect(() => {
-    console.log("saveddrawing", savedDrawing);
-  }, [savedDrawing]);
   return (
     <>
-      {savedDrawing ? <LoadedCanvas savedDrawing={savedDrawing} /> : null}
+      {turn?.previousPlayerData ? <LoadedCanvas savedDrawing={turn.previousPlayerData.data} /> : null}
       <Text fontSize="2xl">
-        {savedDrawing ? "Ecris ce que tu vois !" : "Ecris quelque chose !"}
+        {turn?.previousPlayerData ? "Ecris ce que tu vois !" : "Ecris quelque chose !"}
       </Text>
       <Flex w="100%">
         <CoolInput
@@ -161,20 +159,20 @@ const Write = ({ savedDrawing, setIsDrawing, turn, disabled, setDisabled}) => {
         />
         <ReadyButton
           display={{ base: "none", md: "flex" }}
-          toggleIsDrawing={() => setIsDrawing(true)}
           turn={turn}
           data={value}
           disabled={disabled}
           setDisabled={setDisabled}
+          setValue={setValue}
         />
       </Flex>
       <ReadyButton
         display={{ base: "flex", md: "none" }}
-        toggleIsDrawing={() => setIsDrawing(true)}
         turn={turn}
         data={value}
         disabled={disabled}
         setDisabled={setDisabled}
+          setValue={setValue}
       />
     </>
   );
@@ -185,10 +183,16 @@ const ReadyButton = ({
   data,
   disabled,
   setDisabled,
+  setValue,
   ...props
 }) => {
   const socket = useContext(SocketContext);
   const onReady = () => {
+    if (turn?.data?.type === "draw") {
+      data = data.getSaveData();
+    } else {
+      setValue("");
+    }
     socket.emit("setTurnData", {
       data: data,
       currentTurn: turn.currentTurn,
@@ -198,7 +202,12 @@ const ReadyButton = ({
   };
 
   return (
-    <CoolButton disabled={disabled} onClick={onReady} leftIcon={<ReadyIcon />} {...props}>
+    <CoolButton
+      disabled={disabled}
+      onClick={onReady}
+      leftIcon={<ReadyIcon />}
+      {...props}
+    >
       Terminé !
     </CoolButton>
   );

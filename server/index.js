@@ -84,7 +84,8 @@ io.on("connection", (client) => {
     const roomName = clientRooms[client.id];
     state[roomName].game.setTurnData(data.currentTurn, data.threadId, data.data)
     if (state[roomName].game.isAllTurnDataFilled(data.currentTurn)) {
-      console.log("ok c'est bon ")
+      console.log("ok c'est bon tour suivant")
+      emitTurnStart(roomName, state[roomName].game)
     } else {
       console.log("les autres ont pas finit")
     }
