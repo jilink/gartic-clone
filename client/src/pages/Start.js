@@ -2,15 +2,19 @@ import { Box, Flex, Text } from '@chakra-ui/layout';
 import { useMediaQuery } from '@chakra-ui/media-query';
 import React, { useContext, useEffect, useState } from 'react'
 import CanvasDraw from "react-canvas-draw";
+import { useHistory } from 'react-router';
 import CoolButton from '../components/CoolButton';
 import CoolInput from '../components/CoolInput';
+import LoadedCanvas from '../components/LoadedCanvas';
 import ReadyIcon from '../components/svg/ReadyIcon';
 import SocketContext from '../socket-context';
 
 
 const Start = () => {
-  const [isDrawing, setIsDrawing] = useState(false)
   const socket = useContext(SocketContext);
+  const history = useHistory();
+
+  const [isDrawing, setIsDrawing] = useState(false)
   const [turn, setTurn] = useState({})
   const [disabled, setDisabled] = useState(false)
   useEffect(() => {
@@ -20,6 +24,9 @@ const Start = () => {
       setTurn(tmpTurn);
       setDisabled(false)
       setIsDrawing(tmpTurn.data.type === 'draw')
+    });
+    socket.on("gameReveal", () => {
+      history.push("/reveal");
     });
   }
   }, [socket])
@@ -112,34 +119,6 @@ const Draw = ({ turn, disabled, setDisabled}) => {
   );
 };
 
-const LoadedCanvas = ({ savedDrawing }) => {
-  const [largeCanvas] = useMediaQuery("(min-width: 48em)");
-  return (
-    <>
-      {largeCanvas ? 
-        <CanvasDraw
-          disabled
-          hideGrid
-          brushRadius={7}
-          lazyRadius={2}
-          canvasWidth={600}uu
-          canvasHeight={450}
-          saveData={savedDrawing}
-        />
-        :
-        <CanvasDraw
-          disabled
-          hideGrid
-          brushRadius={4}
-          lazyRadius={2}
-          canvasWidth={300}
-          canvasHeight={225}
-          saveData={savedDrawing}
-        />
-      }
-    </>
-  );
-};
 
 const Write = ({ turn, disabled, setDisabled}) => {
   const [value, setValue] = useState("");

@@ -83,8 +83,15 @@ io.on("connection", (client) => {
     const roomName = clientRooms[client.id];
     state[roomName].game.setTurnData(data.currentTurn, data.threadId, data.data)
     if (state[roomName].game.isAllTurnDataFilled(data.currentTurn)) {
-      console.log("ok c'est bon tour suivant")
-      emitTurnStart(roomName, state[roomName].game)
+      const game = state[roomName].game
+      if (game.currentTurn === game.numberOfTurns)  { // it's equal because we are one turn too far already
+        console.log("Game reveal !")
+        emitGameState(roomName, state[roomName])
+        emitGameReveal(roomName)
+      } else {
+        emitTurnStart(roomName, game)
+        console.log("ok c'est bon tour suivant")
+      }
     } else {
       console.log("les autres ont pas finit")
     }
@@ -103,6 +110,11 @@ function emitTurnStart(room, game) {
 function emitGameState(room, gameState) {
   // Send this event to everyone in the room.
   io.sockets.in(room).emit("gameState", JSON.stringify(gameState));
+}
+
+function emitGameReveal(room) {
+  // Send this event to everyone in the room.
+  io.sockets.in(room).emit("gameReveal")
 }
 
 server.listen(port, () => console.log(`Listening on port ${port}`));

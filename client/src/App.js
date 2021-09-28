@@ -9,6 +9,7 @@ import SocketContext from "./socket-context";
 import GameContext from "./game-context";
 import { makeURL } from "./helpers";
 import Start from "./pages/Start";
+import Reveal from "./pages/Reveal";
 
 
 function App() {
@@ -23,7 +24,6 @@ function App() {
       setInviteURL(makeURL(data))
     });
     socket.on("gameState", (data) => {
-      console.log("data", data);
       setGameState(JSON.parse(data));
     });
   }, []);
@@ -42,6 +42,9 @@ function App() {
               </Route>
               <Route exact path="/start">
                 <Start />
+              </Route>
+              <Route exact path="/reveal">
+                <Reveal />
               </Route>
               <Route path="/:id">
                 <Home setInviteURL={setInviteURL} inviteURL={inviteURL} />
