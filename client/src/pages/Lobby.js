@@ -1,14 +1,24 @@
 import { Flex, Text } from "@chakra-ui/layout";
 import { useToast } from "@chakra-ui/toast";
-import React  from "react";
+import React, { useContext, useEffect }  from "react";
 import { useHistory } from "react-router";
 import CoolButton from "../components/CoolButton";
 import Players from "../components/Players";
 import InviteIcon from "../components/svg/InviteIcon";
+import SocketContext from "../socket-context";
 
 const Lobby = ({ setInviteURL, inviteURL }) => {
   const toast = useToast();
   const history = useHistory();
+  const socket = useContext(SocketContext);
+  useEffect(() => {
+
+    if (socket) {
+    socket.on("gameStart", (data) => {
+      history.push("/start");
+    });
+    }
+  }, [socket]);
 
   const onInvite = () => {
     navigator.clipboard.writeText(inviteURL);
@@ -22,7 +32,7 @@ const Lobby = ({ setInviteURL, inviteURL }) => {
   };
 
   const onStart = () => {
-      history.push("/start");
+      socket.emit("startGame");
   }
 
 

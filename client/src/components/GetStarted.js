@@ -24,6 +24,13 @@ const GetStarted = ({ id }) => {
       history.push("/lobby");
     }
   };
+
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter') {
+      id ? joinGame() : createGame();
+    }
+
+  }
   return (
     <Flex p="5" align="center" direction="column" bg="rgba(80,24,81,.25)">
       <Text fontWeight="bold" fontSize="2xl">
@@ -34,6 +41,7 @@ const GetStarted = ({ id }) => {
         isInvalid={!name}
         setValue={setName}
         placeholder="pseudoTropCool"
+        onKeyDown={handleKeyDown} 
       />
       {id ? 
       <CoolButton onClick={joinGame}> rejoindre une partie</CoolButton> 
