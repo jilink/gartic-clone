@@ -33,6 +33,8 @@ io.on("connection", (client) => {
   client.on("createGame", handleNewGame);
   client.on("joinGame", handleJoinGame);
 
+  client.on("startGame", handleStartGame);
+
   function handleNewGame(playerName) {
     let roomName = makeid(5)
     clientRooms[client.id] = roomName;
@@ -63,12 +65,14 @@ io.on("connection", (client) => {
     client.leave(roomName);
     emitGameState(roomName, state[roomName])
   }
-});
 
-const getApiAndEmit = (client) => {
-  const response = new Date();
-  client.emit("FromAPI", response);
-};
+  function handleStartGame() {
+    const roomName = clientRooms[client.id];
+    io.sockets.in(roomName).emit('gameStart');
+    // state[roomName] = {players : [{name: playerName, id: client.id}]};
+    // emitGameState(roomName, state[roomName])
+  };
+})
 
 function emitGameState(room, gameState) {
   // Send this event to everyone in the room.
