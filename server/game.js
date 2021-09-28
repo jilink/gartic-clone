@@ -9,8 +9,6 @@ class Game {
     for (let i = 0; i < this.numberOfTurns; i++) {
       this.createThreads(i);
     }
-    console.log("threads", this.threads);
-    this.getTurnDataById("sdfosdf654654");
   }
 
   createThreads(turn) {
@@ -76,7 +74,6 @@ class Game {
       numberOfTurns: this.numberOfTurns,
     };
     for (const [key, thread] of Object.entries(this.threads)) {
-      console.log(key, thread);
       if (thread[this.currentTurn].playerId === clientId) {
         turnData.threadId = key
         turnData.data = thread[this.currentTurn]
@@ -87,7 +84,6 @@ class Game {
       }
     }
 
-    console.log(turnData)
     return turnData;
   }
 
@@ -104,6 +100,16 @@ class Game {
 
   getCurrentTurnData(threadId) {
     return this.getTurnData(this.currentTurn, threadId);
+  }
+
+  isAllTurnDataFilled(turn) {
+    for (const [key, thread] of Object.entries(this.threads)) {
+      if (!thread[turn].data) { // si on a un tour pas rempli on s'arrête
+        return false;
+      }
+    }
+    this.newTurn();
+    return true; // tous les tours ont été rempli on passe à la suite
   }
 }
 

@@ -7,7 +7,6 @@ const Players = () => {
   const gameContext = useContext(GameContext)
   const [players, setPlayers] = useState([])
   useEffect(() => {
-    console.log('context', gameContext)
     setPlayers(gameContext?.players || [])
   }, [gameContext])
   return (

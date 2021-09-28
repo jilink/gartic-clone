@@ -37,6 +37,7 @@ io.on("connection", (client) => {
   client.on("joinGame", handleJoinGame);
 
   client.on("startGame", handleStartGame);
+  client.on("setTurnData", handleSetTurnData);
 
   function handleNewGame(playerName) {
     let roomName = makeid(5)
@@ -75,21 +76,33 @@ io.on("connection", (client) => {
     state[roomName].game = new Game(roomName, state[roomName].players)
     // state[roomName] = {players : [{name: playerName, id: client.id}]};
     emitGameState(roomName, state[roomName])
-    emitTurnStart(roomName, state[roomName].game, client.id)
+    emitTurnStart(roomName, state[roomName].game)
+  };
+
+  function handleSetTurnData(data) {
+    console.log("data", data)
+    const roomName = clientRooms[client.id];
+    state[roomName].game.setTurnData(data.currentTurn, data.threadId, data.data)
+    if (state[roomName].game.isAllTurnDataFilled(data.currentTurn)) {
+      console.log("ok c'est bon ")
+    } else {
+      console.log("les autres ont pas finit")
+    }
   };
 })
 
-function emitTurnStart(room, game, clientId) {
-  // Send this event to everyone in the room.
-  io.sockets.in(room)
-    .emit('gameState', JSON.stringify(gameState));
+function emitTurnStart(room, game) {
+  // Send this event to everyone in the room with specific data for each id
+  const clients = io.sockets.adapter.rooms.get(room);
+  for (const clientId of clients) {
+    const client = io.sockets.sockets.get(clientId);
+    client.emit("turnStart", JSON.stringify(game.getTurnDataById(clientId)));
+  }
 }
 
 function emitGameState(room, gameState) {
   // Send this event to everyone in the room.
-  io.sockets.in(room)
-    .emit('gameState', JSON.stringify(gameState));
+  io.sockets.in(room).emit("gameState", JSON.stringify(gameState));
 }
-
 
 server.listen(port, () => console.log(`Listening on port ${port}`));
