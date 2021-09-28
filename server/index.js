@@ -72,11 +72,18 @@ io.on("connection", (client) => {
   function handleStartGame() {
     const roomName = clientRooms[client.id];
     io.sockets.in(roomName).emit('gameStart');
-    new Game('id', state[roomName].players)
+    state[roomName].game = new Game(roomName, state[roomName].players)
     // state[roomName] = {players : [{name: playerName, id: client.id}]};
-    // emitGameState(roomName, state[roomName])
+    emitGameState(roomName, state[roomName])
+    emitTurnStart(roomName, state[roomName].game, client.id)
   };
 })
+
+function emitTurnStart(room, game, clientId) {
+  // Send this event to everyone in the room.
+  io.sockets.in(room)
+    .emit('gameState', JSON.stringify(gameState));
+}
 
 function emitGameState(room, gameState) {
   // Send this event to everyone in the room.

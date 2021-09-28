@@ -4,12 +4,13 @@ class Game {
     this.players = players;
     this.numberOfTurns = players.length;
     this.threads = {};
+    this.currentTurn = 0;
 
     for (let i = 0; i < this.numberOfTurns; i++) {
       this.createThreads(i);
     }
-
-    console.log(this.getTurnData(1, 2))
+    console.log("threads", this.threads);
+    this.getTurnDataById("sdfosdf654654");
   }
 
   createThreads(turn) {
@@ -33,6 +34,7 @@ class Game {
   writeTurn(player) {
     return {
       playerId: player.id,
+      playerName: player.name,
       type: "write",
       data: "",
     };
@@ -41,6 +43,7 @@ class Game {
   drawTurn(player) {
     return {
       playerId: player.id,
+      playerName: player.name,
       type: "draw",
       data: "",
     };
@@ -49,7 +52,6 @@ class Game {
   movePlayersLeft() {
     const firstPlayer = this.players.shift();
     this.players.push(firstPlayer);
-    console.log("players", this.players);
   }
 
   getThreads() {
@@ -66,6 +68,42 @@ class Game {
 
   getTurnData(turn, threadId) {
     return this.threads[threadId][turn];
+  }
+
+  getTurnDataById(clientId) {
+    const turnData = {
+      currentTurn: this.currentTurn,
+      numberOfTurns: this.numberOfTurns,
+    };
+    for (const [key, thread] of Object.entries(this.threads)) {
+      console.log(key, thread);
+      if (thread[this.currentTurn].playerId === clientId) {
+        turnData.threadId = key
+        turnData.data = thread[this.currentTurn]
+        if(this.currentTurn > 0) {
+          turnData.previousPlayerData = thread[this.currentTurn - 1]
+        }
+        break;
+      }
+    }
+
+    console.log(turnData)
+    return turnData;
+  }
+
+  getCurrentTurn() {
+    return this.currentTurn;
+  }
+  getNumberOfTurns() {
+    return this.numberOfTurns;
+  }
+
+  newTurn() {
+    this.currentTurn = this.currentTurn + 1;
+  }
+
+  getCurrentTurnData(threadId) {
+    return this.getTurnData(this.currentTurn, threadId);
   }
 }
 
