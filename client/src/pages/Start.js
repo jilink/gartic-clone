@@ -1,4 +1,4 @@
-import { Box, Flex, Text } from '@chakra-ui/layout';
+import { Flex, Text } from '@chakra-ui/layout';
 import { useMediaQuery } from '@chakra-ui/media-query';
 import React, { useContext, useEffect, useState } from 'react'
 import CanvasDraw from "react-canvas-draw";
@@ -29,7 +29,7 @@ const Start = () => {
       history.push("/reveal");
     });
   }
-  }, [socket])
+  }, [socket, history])
   return (
     <Flex
       direction="column"

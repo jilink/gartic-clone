@@ -18,7 +18,7 @@ const Lobby = ({ setInviteURL, inviteURL }) => {
       history.push("/start");
     });
     }
-  }, [socket]);
+  }, [socket, history]);
 
   const onInvite = () => {
     navigator.clipboard.writeText(inviteURL);

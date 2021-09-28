@@ -13,7 +13,6 @@ const Reveal = () => {
   useEffect(() => {
     const tmpThreads = Object.values(gameContext?.game?.threads);
     setThreads(tmpThreads)
-    console.log('tpthread', tmpThreads)
   }, [gameContext])
 
   return (
@@ -44,34 +43,34 @@ const Reveal = () => {
   );
 };
 
-export const Thread = ({thread}) => {
-  const [entry, setEntry] = useState({})
+export const Thread = ({ thread }) => {
+  const [entry, setEntry] = useState({});
   useEffect(() => {
-    console.log("le thread", thread)
-    setEntry(thread?.[0])
+    const updateEntry = () => {
+      thread.shift();
+      setEntry(thread?.[0]);
+    };
+    setEntry(thread?.[0]);
     if (thread?.length > 1) {
-      setTimeout(updateEntry, 5000) 
+      setTimeout(updateEntry, 5000);
     }
-  }, [thread])
-
-  const updateEntry = () => {
-    thread.shift();
-    setEntry(thread?.[0])
-  }
+  }, [thread]);
 
   return (
     <div>
       <Text>THREAD</Text>
-    {thread?.length ? <Entry entry={entry}/> : null }
+      {thread?.length ? <Entry entry={entry} /> : null}
     </div>
-  )
-}
+  );
+};
 
 export const Entry = ({ entry }) => {
   return (
     <>
-      <Avatar m="2" size="md" name={entry?.playerName}/>
-      <Text fontWeight="bold" fontSize="xl" color="rgb(48, 26, 107)">{entry?.playerName}</Text>
+      <Avatar m="2" size="md" name={entry?.playerName} />
+      <Text fontWeight="bold" fontSize="xl" color="rgb(48, 26, 107)">
+        {entry?.playerName}
+      </Text>
       {entry?.type === "draw" ? (
         <LoadedCanvas savedDrawing={entry.data} />
       ) : (
@@ -80,15 +79,17 @@ export const Entry = ({ entry }) => {
     </>
   );
 };
-const Player = ({player}) => {
-  return (
-    <Flex borderRadius="100px 25px 25px 100px" bg="white" direction="row" align="center" alignSelf="stretch" m="4" px="2" minW="50%">
-    </Flex>
-  )
-}
 
-export const Next = ({setCurrentThread, currentThread}) => {
-  return <CoolButton onClick={() => {setCurrentThread(currentThread + 1)}}>Next thread</CoolButton>;
+export const Next = ({ setCurrentThread, currentThread }) => {
+  return (
+    <CoolButton
+      onClick={() => {
+        setCurrentThread(currentThread + 1);
+      }}
+    >
+      Next thread
+    </CoolButton>
+  );
 };
 
 export default Reveal;

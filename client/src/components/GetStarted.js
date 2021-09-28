@@ -12,7 +12,6 @@ const GetStarted = ({ id }) => {
   const history = useHistory();
   const createGame = () => {
     if (name) {
-      console.log("ici");
       socket.emit("createGame", name);
       history.push("/lobby");
     }
@@ -20,7 +19,6 @@ const GetStarted = ({ id }) => {
   const joinGame = () => {
     if (name) {
       socket.emit("joinGame", {id: id, name: name});
-      console.log("ici join");
       history.push("/lobby");
     }
   };
