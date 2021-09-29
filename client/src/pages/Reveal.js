@@ -65,7 +65,7 @@ export const Thread = ({setNextDisabled, currentThread, thread }) => {
     if (thread?.length > 1) {
       setTimeout(updateEntry, 5000);
     }
-  }, [thread]);
+  }, [thread, setNextDisabled]);
 
   return (
     <>
@@ -89,7 +89,7 @@ export const Entry = ({ entry }) => {
           px="2"
           minW="50%"
         >
-          <Avatar size="2xl" m="2" size="md" name={entry?.playerName} />
+          <Avatar m="2" size="md" name={entry?.playerName} />
           <Text
             alignSelf="center"
             fontWeight="bold"

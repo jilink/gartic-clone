@@ -16,7 +16,7 @@ const Home = ({ setInviteURL }) => {
   }, [id, setInviteURL]);
   return (
     <Flex h="100%" direction="column" alignItems="center" p="5">
-      <Image maxH="150px" src={title} fallbackSrc="https://via.placeholder.com/150"/>
+      <Image maxH="150px" src={title} />
       <Spacer />
       <GetStarted id={id} />
       <Spacer />
