@@ -174,7 +174,13 @@ const ReadyButton = ({
   ...props
 }) => {
   const socket = useContext(SocketContext);
+  const history = useHistory();
   const onReady = () => {
+    if (turn.currentTurn === undefined) {
+      history.push('/');
+      return;
+    }
+
     if (turn?.data?.type === "draw") {
       data = data.getSaveData();
     }

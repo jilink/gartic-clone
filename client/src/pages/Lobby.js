@@ -1,24 +1,28 @@
 import { Flex, Text } from "@chakra-ui/layout";
 import { useToast } from "@chakra-ui/toast";
-import React, { useContext, useEffect }  from "react";
+import React, { useContext, useEffect, useState }  from "react";
 import { useHistory } from "react-router";
 import CoolButton from "../components/CoolButton";
 import Players from "../components/Players";
 import InviteIcon from "../components/svg/InviteIcon";
+import GameContext from "../game-context";
 import SocketContext from "../socket-context";
 
 const Lobby = ({ setInviteURL, inviteURL }) => {
   const toast = useToast();
   const history = useHistory();
   const socket = useContext(SocketContext);
-  useEffect(() => {
+  const gameContext = useContext(GameContext)
 
+  const [players, setPlayers] = useState([])
+  useEffect(() => {
+    setPlayers(gameContext?.players || [])
     if (socket) {
     socket.on("gameStart", (data) => {
       history.push("/start");
     });
     }
-  }, [socket, history]);
+  }, [socket, gameContext, history]);
 
   const onInvite = () => {
     navigator.clipboard.writeText(inviteURL);
@@ -32,6 +36,10 @@ const Lobby = ({ setInviteURL, inviteURL }) => {
   };
 
   const onStart = () => {
+      if (!players.length){
+         history.push("/");
+         return;
+      }
       socket.emit("startGame");
   }
 
@@ -41,7 +49,7 @@ const Lobby = ({ setInviteURL, inviteURL }) => {
       <Text m="4" fontSize="2xl" fontWeight="bold" color="secondary">
         Joueurs
       </Text>
-      <Players />
+      <Players players={players}/>
       <Flex>
         <CoolButton onClick={onInvite} leftIcon={<InviteIcon />}>
           Inviter

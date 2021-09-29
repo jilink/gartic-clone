@@ -34,7 +34,7 @@ class Game {
       playerId: player.id,
       playerName: player.name,
       type: "write",
-      data: "",
+      data: null,
     };
   }
 
@@ -43,7 +43,7 @@ class Game {
       playerId: player.id,
       playerName: player.name,
       type: "draw",
-      data: "",
+      data: null,
     };
   }
 
@@ -61,6 +61,7 @@ class Game {
   }
 
   setTurnData(turn, threadId, data) {
+    if (!(threadId in this.threads)) return;
     this.threads[threadId][turn].data = data;
   }
 
@@ -104,7 +105,8 @@ class Game {
 
   isAllTurnDataFilled(turn) {
     for (const [key, thread] of Object.entries(this.threads)) {
-      if (!thread[turn].data) { // si on a un tour pas rempli on s'arrête
+      if (thread[turn].data === null) {
+        // si on a un tour pas rempli on s'arrête
         return false;
       }
     }
