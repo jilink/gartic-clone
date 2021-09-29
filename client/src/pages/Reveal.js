@@ -103,7 +103,7 @@ export const Entry = ({ entry }) => {
       {entry?.type === "draw" ? (
         <LoadedCanvas savedDrawing={entry.data} />
       ) : (
-        <Text>{entry?.data}</Text>
+        <Text fontWeight="bold" fontSize="3xl">{entry?.data}</Text>
       )}
     </>
   );
