@@ -1,9 +1,9 @@
+import 'dotenv/config';
 const express = require("express");
 const http = require("http");
 const socketIo = require("socket.io");
 const { default: Game } = require("./game");
 
-const port = 4001;
 const index = require("./routes/index");
 const { makeid } = require("./utils");
 
@@ -117,4 +117,4 @@ function emitGameReveal(room) {
   io.sockets.in(room).emit("gameReveal")
 }
 
-server.listen(port, () => console.log(`Listening on port ${port}`));
+server.listen(process.env.PORT, () => console.log(`Listening on port ${process.env.PORT}`));
