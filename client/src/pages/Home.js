@@ -1,8 +1,10 @@
-import { Flex, Spacer, Text } from '@chakra-ui/layout'
+import { Image } from '@chakra-ui/image';
+import { Flex, Spacer } from '@chakra-ui/layout'
 import React, { useEffect } from 'react'
 import { useParams } from 'react-router';
 import GetStarted from '../components/GetStarted'
 import { makeURL } from '../helpers';
+import title from '../images/title.png'
 
 const Home = ({ setInviteURL }) => {
   const { id } = useParams();
@@ -14,9 +16,7 @@ const Home = ({ setInviteURL }) => {
   }, [id, setInviteURL]);
   return (
     <Flex h="100%" direction="column" alignItems="center" p="5">
-      <Text p="2" fontSize="5xl">
-        GARTIC CLONE
-      </Text>
+      <Image maxH="150px" src={title} fallbackSrc="https://via.placeholder.com/150"/>
       <Spacer />
       <GetStarted id={id} />
       <Spacer />
