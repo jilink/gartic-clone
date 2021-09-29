@@ -36,9 +36,9 @@ const Lobby = ({ setInviteURL, inviteURL }) => {
   };
 
   const onStart = () => {
-      if (!players.length){
-         history.push("/");
-         return;
+      if (players.length < 2) {
+        history.push("/");
+        return;
       }
       socket.emit("startGame");
   }

@@ -1,5 +1,6 @@
-import { Flex, Text } from "@chakra-ui/layout";
+import { Box, Flex, Spacer, Text } from "@chakra-ui/layout";
 import React, { useContext, useEffect, useState } from "react";
+import { useHistory } from "react-router";
 import Avatar from "../components/Avatar";
 import CoolButton from "../components/CoolButton";
 import LoadedCanvas from "../components/LoadedCanvas";
@@ -8,11 +9,14 @@ import GameContext from "../game-context";
 const Reveal = () => {
   const gameContext = useContext(GameContext)
   const [threads, setThreads] = useState([])
+  const [nextDisabled, setNextDisabled] = useState(true)
   const [currentThread, setCurrentThread] = useState(0)
+  const [totalThreadNumber, setTotalThreadNumber] = useState(0)
 
   useEffect(() => {
     const tmpThreads = Object.values(gameContext?.game?.threads);
     setThreads(tmpThreads)
+    setTotalThreadNumber(tmpThreads.length)
   }, [gameContext])
 
   return (
@@ -34,21 +38,28 @@ const Reveal = () => {
         alignItems="center"
         justify="center"
       >
-        {threads ? <Thread thread={threads[currentThread]}/> : null }
+<Spacer/>
+        {threads ? <Thread setNextDisabled={setNextDisabled} currentThread={currentThread} thread={threads[currentThread]}/> : null }
 
-        <Next setCurrentThread={setCurrentThread} currentThread={currentThread}/>
+<Spacer/>
+        <Next setNextDisabled={setNextDisabled} disabled={nextDisabled} setCurrentThread={setCurrentThread} currentThread={currentThread} totalThreadNumber={totalThreadNumber}/>
 
       </Flex>
     </Flex>
   );
 };
 
-export const Thread = ({ thread }) => {
+export const Thread = ({setNextDisabled, currentThread, thread }) => {
   const [entry, setEntry] = useState({});
   useEffect(() => {
     const updateEntry = () => {
       thread.shift();
       setEntry(thread?.[0]);
+      if (thread?.length > 1) {
+        setTimeout(updateEntry, 5000);
+      } else {
+        setNextDisabled(false)
+      }
     };
     setEntry(thread?.[0]);
     if (thread?.length > 1) {
@@ -57,20 +68,38 @@ export const Thread = ({ thread }) => {
   }, [thread]);
 
   return (
-    <div>
-      <Text>THREAD</Text>
+    <>
+      <Text top={0} position='absolute' fontWeight='bold' fontSize='4xl'>THREAD {currentThread + 1}</Text>
       {thread?.length ? <Entry entry={entry} /> : null}
-    </div>
+    </>
   );
 };
 
 export const Entry = ({ entry }) => {
   return (
     <>
-      <Avatar m="2" size="md" name={entry?.playerName} />
-      <Text fontWeight="bold" fontSize="xl" color="rgb(48, 26, 107)">
-        {entry?.playerName}
-      </Text>
+      <Box position="absolute" top={10}>
+        <Flex
+          borderRadius="50px 50px 50px 50px"
+          bg="white"
+          direction="row"
+          align="center"
+          alignSelf="stretch"
+          m="4"
+          px="2"
+          minW="50%"
+        >
+          <Avatar size="2xl" m="2" size="md" name={entry?.playerName} />
+          <Text
+            alignSelf="center"
+            fontWeight="bold"
+            fontSize="2xl"
+            color="rgb(48, 26, 107)"
+          >
+            {entry?.playerName}
+          </Text>
+        </Flex>
+      </Box>
       {entry?.type === "draw" ? (
         <LoadedCanvas savedDrawing={entry.data} />
       ) : (
@@ -80,15 +109,42 @@ export const Entry = ({ entry }) => {
   );
 };
 
-export const Next = ({ setCurrentThread, currentThread }) => {
+export const Next = ({
+  totalThreadNumber,
+  setNextDisabled,
+  setCurrentThread,
+  currentThread,
+  ...props
+}) => {
+  const [lastThread, setLastThread] = useState(false);
+  const history = useHistory();
   return (
-    <CoolButton
-      onClick={() => {
-        setCurrentThread(currentThread + 1);
-      }}
-    >
-      Next thread
-    </CoolButton>
+    <>
+      {lastThread ? (
+        <CoolButton
+          onClick={() => {
+            history.push("/");
+          }}
+          {...props}
+        >
+          Back home
+        </CoolButton>
+      ) : (
+        <CoolButton
+          onClick={() => {
+            const current = currentThread + 1;
+            if (current + 1 === totalThreadNumber) {
+              setLastThread(true);
+            }
+            setCurrentThread(current);
+            setNextDisabled(true);
+          }}
+          {...props}
+        >
+          Next thread
+        </CoolButton>
+      )}
+    </>
   );
 };
 
